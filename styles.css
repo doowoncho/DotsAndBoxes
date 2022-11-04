@@ -1,6 +1,6 @@
 .v{
-    padding: 4rem 1rem;
-
+    padding: 3rem 1rem;
+    background-color: rgb(128, 70, 70);
     opacity: 0;
 }
 
@@ -15,8 +15,8 @@
 
 
 .h{
-    padding: 1rem 4rem;
-
+    padding: 1rem 3rem;
+    background-color: rgb(24, 24, 24);
     opacity: 0;
 }
 .h:hover{
