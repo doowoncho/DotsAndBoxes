@@ -1,0 +1,32 @@
+.v{
+    padding: 4rem 1rem;
+
+    opacity: 0;
+}
+
+.v:hover{
+    opacity: 0.5;
+}
+
+.dot{
+    padding: 1rem;
+    background-color: black;
+}
+
+
+.h{
+    padding: 1rem 4rem;
+
+    opacity: 0;
+}
+.h:hover{
+    opacity: 0.5;
+}
+
+/* .square:hover{
+    background-color: grey;
+} */
+
+table{
+    margin: auto;
+}
