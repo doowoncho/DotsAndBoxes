@@ -81,7 +81,7 @@ table{
 }
 
 .mainPage{
-    background: url(/DotsAndBoxes/shubham-dhage-pIfbjoX4DV0-unsplash.jpg) center/cover no-repeat fixed;
+    background: url(./shubham-dhage-pIfbjoX4DV0-unsplash.jpg) center/cover no-repeat fixed;
   
     background-blend-mode: multiply;
     display: flex; 
