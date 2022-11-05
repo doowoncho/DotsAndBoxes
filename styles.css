@@ -1,6 +1,6 @@
 .v{
     padding: 3rem 1rem;
-    background-color: rgb(128, 70, 70);
+    background-color: rgb(32, 32, 32);
     opacity: 0;
 }
 
@@ -29,4 +29,61 @@
 
 table{
     margin: auto;
+}
+
+#icon{
+    /* border: 2px solid white; */
+    border-radius: 30px;
+}
+.scores{
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+}
+
+.popup{
+    width: min(300px, 100%);
+    border-radius: 6px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
+    justify-content: center;
+    text-align: center;
+    padding: 0 30px 30px;
+
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    visibility: hidden;
+    transition: transform 0.4s, top 0.4s;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.popup button{
+    color: black;
+    border-radius: 20px;
+    border: none;
+    background-color: rgb(237, 237, 237);
+    width: 200px;
+    height: 30px;
+    cursor: pointer;
+    
+}
+.popup button:hover{
+    background-color: rgb(192, 192, 192);
+    transition: 0.1s;
+}
+
+.open-popup{
+    visibility: visible;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.mainPage{
+    background: url(/DotsAndBoxes/shubham-dhage-pIfbjoX4DV0-unsplash.jpg) center/cover no-repeat fixed;
+  
+    background-blend-mode: multiply;
+    display: flex; 
+    height: 100vh;
 }

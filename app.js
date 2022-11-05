@@ -5,6 +5,7 @@ p2Display = document.getElementById("p2Display")
 p3Display = document.getElementById("p3Display")
 turnDisplay = document.getElementById("turnDisplay")
 
+
 p1 = 0
 p2 = 0
 p3 = 0
@@ -15,26 +16,13 @@ h = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], 
 //need a way to reliably figure out a square is full or not
 //then we basically done tho lmao
 
-
-
 document.addEventListener('click', (element) =>
   {
-    if (element.target.id !== '') {
+    if (element.target.id[0] == 'h' || element.target.id[0] == 'v') {
         squareChecker(element)
     }
   }
 );
-
-//if i want the hover effect with colors
-
-// document.addEventListener('mouseover', (element) =>
-//   {
-//     if ((element.target.id[0] == 'h' || element.target.id[0] == 'v')) {
-//         element.target.style.background= getColor()
-//     }
-     
-//   }
-// );
 
 function colorChange(element){
   element.target.style.background= "black"
@@ -63,16 +51,27 @@ function turnTracker(){
   return turn
 }
 
-// function scoreTracker(){
-//   if(turn == 0)p2+=1
-//   if(turn == 1)p3+=1
-//   if(turn == 2)p1+=1
-// }
+function scoreTracker(){
+  if(turn == 0){
+    p1+=1
+    p1Display.innerHTML =`P1: ${p1}`
+
+  }
+  if(turn == 1){
+    p2+=1
+    p2Display.innerHTML =`P2: ${p2}`
+  }
+  if(turn == 2){
+    p3+=1
+    p3Display.innerHTML =`P3: ${p3}`
+  }
+}
 
 function squareChecker(element){
   let id = element.target.id;
   if(id[3] != null){
     row = id[1]+id[2]
+    console.log(row)
     col = id[3]
   }else{
     row = id[1]
@@ -82,6 +81,8 @@ function squareChecker(element){
    if(id[0]=='h'){
       if(h[parseInt(row)][parseInt(col)] == 0){
          h[parseInt(row)][parseInt(col)] = 1
+         turnTracker()
+          if(id != "h10" && id != "h00" && id != "h20" && id != "h30")
           try{
             h[parseInt(row)+4][0] = 1
           }
@@ -89,36 +90,49 @@ function squareChecker(element){
 
           }
 
-         square = document.getElementById(isSquare(id))
-         if (square != null) {
-          square.style.background = getColor()
-          turn-=1
-
-        }
-        colorChange(element)
+          colorChange(element)
+          square = document.getElementById(isSquare(id))
+          if (square != null) {
+            square.style.background = getColor()
+            scoreTracker()
+            square = document.getElementById(isSquare(id))
+            if (square != null) {
+              scoreTracker()
+              square.style.background = getColor()
+            }
+            turn -=1
+          }
         }
       }
       else{
         if(v[parseInt(row)][parseInt(col)] == 0){
             v[parseInt(row)][parseInt(col)] = 1
-            if(id != "v00" && id != "v40" &&id != "v80" ){
+            turnTracker()
+            if(id != "v00" && id != "v40" &&id != "v80" &&id != "v71"  &&id != "v111" &&id != "v31" &&id != "v151"&&id != "v120"){
               try{
                 v[parseInt(row)+1][0] = 1
+                console.log(v)
               }
               catch{
 
               }
             }
-          colorChange(element)
-          square = document.getElementById(isSquare(id))
-          if (square != null) {
-            square.style.background = getColor()
-            turn -=1
-          }
+            colorChange(element)
+            square = document.getElementById(isSquare(id))
+            if (square != null) {
+              square.style.background = getColor()
+              scoreTracker()
+              square = document.getElementById(isSquare(id))
+              if (square != null) {
+                scoreTracker()
+                square.style.background = getColor()
+              }
+              turn -=1
+            }
       }
   }
-
-    turnTracker()
+    gameEnd()
+    
 }
 
 function isSquare(){
@@ -161,7 +175,53 @@ function isSquare(){
         return i
       } 
   }
-
- 
   return null
+}
+
+function gameEnd(){
+
+  end = true
+  count = 0
+
+  for(let i = 0; i< h.length; i++){
+    for(let j = 0; j< 2; j++){
+      if (h[i][j] == 0){
+          end = false
+      }
+    }
+  }
+  for(let i = 0; i< v.length; i++){
+    for(let j = 0; j< 2; j++){
+      if (v[i][j] == 0){
+          end = false
+      }
+    }
+  }
+
+  if(end == true){
+    openPopup()
+  }
+
+}
+
+
+function checkWinner(){
+  winner = Math.max(p1,p2,p3)
+  console.log(winner)
+  if(winner == p1) return 'Player 1'
+  else if(winner == p2) return'Player 2'
+  else if(winner == p3) {
+    return 'Player 3'
+  }
+}
+
+let popup = document.getElementById("popup");
+let winner = document.getElementById("winner")
+function openPopup(){
+    winner.innerHTML = `The winner is ${checkWinner()}`
+    popup.classList.add("open-popup");
+}
+
+function closePopup(){
+    popup.classList.remove("open-popup");
 }
