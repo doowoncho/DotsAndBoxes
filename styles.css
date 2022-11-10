@@ -23,16 +23,11 @@
     opacity: 0.5;
 }
 
-/* .square:hover{
-    background-color: grey;
-} */
-
 table{
     margin: auto;
 }
 
 #icon{
-    /* border: 2px solid white; */
     border-radius: 30px;
 }
 .scores{
