@@ -1,4 +1,7 @@
+//keeps track of the turns by increasing turn by 1 everytime a move is made
 turn = 0
+
+//the different actual displays that show scores as well ahs whos turn it is
 score = document.getElementById("scoreDislay")
 p1Display = document.getElementById("p1Display")
 p2Display = document.getElementById("p2Display")
@@ -10,12 +13,13 @@ p1 = 0
 p2 = 0
 p3 = 0
 
+//these two 2d arrays keep track of which vertical lines have been filled and which
+//horizontal lines have been filled in order to see where a complete square is made
 v = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0]]
 h = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0]]
 
-//need a way to reliably figure out a square is full or not
-//then we basically done tho lmao
 
+//checks the id of the element that is clicked!
 document.addEventListener('click', (element) =>
   {
     if (element.target.id[0] == 'h' || element.target.id[0] == 'v') {
@@ -24,11 +28,15 @@ document.addEventListener('click', (element) =>
   }
 );
 
+
+//changes the line dive that has been clicked to be black and visible
 function colorChange(element){
   element.target.style.background= "black"
   element.target.style.opacity='1'
 }
 
+
+//this return the correct color depending on which player's turn it is
 function getColor(){
   if(turn == 0) return 'blue'
   else if(turn == 1) return'red'
@@ -38,6 +46,8 @@ function getColor(){
   return
 }
 
+//this changes the turns, displays the turns as well as returns 
+//which player's turn it currently is
 function turnTracker(){
   turn ++
   if(turn >2){
@@ -51,6 +61,9 @@ function turnTracker(){
   return turn
 }
 
+
+//This changes the display as well as the score to keep track
+//of the scores
 function scoreTracker(){
   if(turn == 0){
     p1+=1
@@ -67,6 +80,8 @@ function scoreTracker(){
   }
 }
 
+//this function fills in the 2d array at the correct indices and also checks
+//the corresponding indices in order to see if a square is supposed to be filled or not
 function squareChecker(element){
   let id = element.target.id;
   if(id[3] != null){
@@ -82,6 +97,9 @@ function squareChecker(element){
       if(h[parseInt(row)][parseInt(col)] == 0){
          h[parseInt(row)][parseInt(col)] = 1
          turnTracker()
+         //this if and try block make sure to also change a 0 to a 1 in the index that
+         //corresponds to the adjacent square since some lines can complete more than 1 square!
+         //the if is to check if it is an edge line, thus can only create 1 sqaure at most
           if(id != "h10" && id != "h00" && id != "h20" && id != "h30")
           try{
             h[parseInt(row)+4][0] = 1
@@ -135,6 +153,9 @@ function squareChecker(element){
     
 }
 
+
+//this will check all corresponding indices of the id of the div that has been 
+//clicked and thus will return which square has been filled, if any!
 function isSquare(){
   for(let i = 0; i< h.length; i++){
       if((v[i][0] == 1 && v[i][1] == 1 && h[i][0] == 1 && h[i][1] == 1)){
@@ -178,6 +199,8 @@ function isSquare(){
   return null
 }
 
+
+//checks both 2d arrays to see if there are no more lines to be clicked!
 function gameEnd(){
 
   end = true
@@ -204,7 +227,7 @@ function gameEnd(){
 
 }
 
-
+//finds the highest score and returns who the winner is accordingly!
 function checkWinner(){
   winner = Math.max(p1,p2,p3)
   console.log(winner)
@@ -215,6 +238,7 @@ function checkWinner(){
   }
 }
 
+//creates a popup that displays the winning player
 let popup = document.getElementById("popup");
 let winner = document.getElementById("winner")
 function openPopup(){
