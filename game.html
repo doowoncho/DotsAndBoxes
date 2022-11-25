@@ -6,10 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- CSS only -->
+    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script  defer src="app.js"></script>
+    <script  defer src="script.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 <body>
+    <div id="passContainer">
+
+    </div>
     <div class="popup" id="popup">
         <br>
         <br>
@@ -142,11 +147,6 @@
                 <input class = "btn btn-lg btn-primary" type="submit" value="Restart" />
             </form>
     </div>
-
-
-
-
-    
-    <script src="app.js"></script>
+        <!-- <script src="app.js"></script> -->
 </body>
 </html>

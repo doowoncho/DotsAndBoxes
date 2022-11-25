@@ -1,13 +1,11 @@
 //keeps track of the turns by increasing turn by 1 everytime a move is made
 turn = 0
-
 //the different actual displays that show scores as well ahs whos turn it is
 score = document.getElementById("scoreDislay")
 p1Display = document.getElementById("p1Display")
 p2Display = document.getElementById("p2Display")
 p3Display = document.getElementById("p3Display")
 turnDisplay = document.getElementById("turnDisplay")
-
 
 p1 = 0
 p2 = 0
@@ -18,7 +16,6 @@ p3 = 0
 v = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0]]
 h = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0]]
 
-
 //checks the id of the element that is clicked!
 document.addEventListener('click', (element) =>
   {
@@ -28,13 +25,11 @@ document.addEventListener('click', (element) =>
   }
 );
 
-
 //changes the line dive that has been clicked to be black and visible
 function colorChange(element){
   element.target.style.background= "black"
   element.target.style.opacity='1'
 }
-
 
 //this return the correct color depending on which player's turn it is
 function getColor(){
@@ -53,14 +48,19 @@ function turnTracker(){
   if(turn >2){
     turn = 0
   }
-
-  if(turn == 0)turnDisplay.innerHTML ="Player 1's turn"
-  if(turn == 1)turnDisplay.innerHTML ="Player 2's turn"
-  if(turn == 2)turnDisplay.innerHTML ="Player 3's turn"
-
-  return turn
+  turnDisplayer()
 }
 
+function setTurn(data){
+  turn = data;
+  turnDisplayer()
+}
+
+function turnDisplayer(){
+    if(turn == 0)turnDisplay.innerHTML ="Player 1's turn"
+    if(turn == 1)turnDisplay.innerHTML ="Player 2's turn"
+    if(turn == 2)turnDisplay.innerHTML ="Player 3's turn"
+}
 
 //This changes the display as well as the score to keep track
 //of the scores
@@ -97,6 +97,7 @@ function squareChecker(element){
       if(h[parseInt(row)][parseInt(col)] == 0){
          h[parseInt(row)][parseInt(col)] = 1
          turnTracker()
+         socket.emit('moveMade', turn, h, v)
          //this if and try block make sure to also change a 0 to a 1 in the index that
          //corresponds to the adjacent square since some lines can complete more than 1 square!
          //the if is to check if it is an edge line, thus can only create 1 sqaure at most
@@ -113,19 +114,23 @@ function squareChecker(element){
           if (square != null) {
             square.style.background = getColor()
             scoreTracker()
+            socket.emit('score', p1, p2, p3)
             square = document.getElementById(isSquare(id))
             if (square != null) {
               scoreTracker()
+              socket.emit('score', p1, p2, p3)
               square.style.background = getColor()
             }
             turn -=1
           }
+          
         }
       }
       else{
         if(v[parseInt(row)][parseInt(col)] == 0){
             v[parseInt(row)][parseInt(col)] = 1
             turnTracker()
+            socket.emit('moveMade', turn, h, v)
             if(id != "v00" && id != "v40" &&id != "v80" &&id != "v71"  &&id != "v111" &&id != "v31" &&id != "v151"&&id != "v120"){
               try{
                 v[parseInt(row)+1][0] = 1
@@ -140,19 +145,19 @@ function squareChecker(element){
             if (square != null) {
               square.style.background = getColor()
               scoreTracker()
+              socket.emit('score', p1, p2, p3)
               square = document.getElementById(isSquare(id))
               if (square != null) {
                 scoreTracker()
+                socket.emit('score', p1, p2, p3)
                 square.style.background = getColor()
               }
               turn -=1
             }
-      }
+          }
   }
     gameEnd()
-    
 }
-
 
 //this will check all corresponding indices of the id of the div that has been 
 //clicked and thus will return which square has been filled, if any!
@@ -198,7 +203,6 @@ function isSquare(){
   }
   return null
 }
-
 
 //checks both 2d arrays to see if there are no more lines to be clicked!
 function gameEnd(){
