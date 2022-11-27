@@ -1,38 +1,40 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-      cors:{
-            origin:"*",
+  cors:{
+    origin:"*",
     //       // allowedHeaders: ['Content-Type'],
     //       // credentials: true
-       },
-});
-
-io.on("connection", (socket) => {
-  // ...
+  },
 });
 
 httpServer.listen(3000);
 
+rooms = 0
+
 io.on('connect', socket =>{
   console.log("New User")
 
-  socket.on('moveMade', (turn, dataH, dataV) => {
-      socket.broadcast.emit('changeTurn', turn, dataH, dataV)
-      console.log(`Player ${turn}'s turn`)
+  socket.on('moveMade', (id, code) => {
+      socket.to(code).emit('changeTurn', id)
   })
 
-
-  socket.on('roomCreate', () =>{
-    console.log('room created')
+  socket.on('join-room', (code) =>{
+    console.log(`joined room ${code}`)
+    socket.join(code)
+    if((io.sockets.adapter.rooms.get(code).size) == 3) {
+        socket.emit('roomFull')
+    }
+    if((io.sockets.adapter.rooms.get(code).size) > 3) {
+      socket.leave(code)
+    }
   })
-  socket.on('score', () => {
-    socket.broadcast.emit('changeScore')
 
+  socket.on('score', (code) => {
+    socket.to(code).emit('changeScore')
   })
   
 })

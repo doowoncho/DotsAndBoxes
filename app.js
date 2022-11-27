@@ -1,3 +1,41 @@
+const socket = io('http://localhost:3000')
+
+const urlParams = new URLSearchParams(window.location.search);
+const host = urlParams.get('playerType') == "host";
+
+code = null
+player = null
+
+//logic seems to be off by a bit when someone gets a square
+
+socket.on('connect', () =>{
+        if(host == true){
+            const div = document.createElement("div")
+            div.textContent = "Room Code: " +"test"+socket.id
+            document.getElementById('passContainer').append(div)
+            code = "test"+socket.id
+            socket.emit("join-room", code)     
+            player = 0
+          }
+          else{
+            code = prompt("Type in your friend's room code");
+            player = 1
+            socket.emit("join-room", code)
+          }
+})
+        
+socket.on('changeTurn', (id) => {
+  squareChecker(id)
+})
+
+socket.on('changeScore', () =>{
+  scoreTracker()
+})
+
+socket.on('roomFull', () => {
+  player = 2
+
+})
 //keeps track of the turns by increasing turn by 1 everytime a move is made
 turn = 0
 //the different actual displays that show scores as well ahs whos turn it is
@@ -19,16 +57,20 @@ h = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], 
 //checks the id of the element that is clicked!
 document.addEventListener('click', (element) =>
   {
-    if (element.target.id[0] == 'h' || element.target.id[0] == 'v') {
-        squareChecker(element)
+    if(turn == player){
+        if (element.target.id[0] == 'h' || element.target.id[0] == 'v') {
+            squareChecker(element.target.id)  
+            socket.emit('moveMade', element.target.id, code)
+        }
     }
   }
 );
 
 //changes the line dive that has been clicked to be black and visible
-function colorChange(element){
-  element.target.style.background= "black"
-  element.target.style.opacity='1'
+function colorChange(id){
+  element = document.getElementById(id)
+  element.style.background= "black"
+  element.style.opacity='1'
 }
 
 //this return the correct color depending on which player's turn it is
@@ -43,16 +85,11 @@ function getColor(){
 
 //this changes the turns, displays the turns as well as returns 
 //which player's turn it currently is
-function turnTracker(){
-  turn ++
+function turnTracker(foundSquare){
+  if(foundSquare == false)turn ++
   if(turn >2){
     turn = 0
   }
-  turnDisplayer()
-}
-
-function setTurn(data){
-  turn = data;
   turnDisplayer()
 }
 
@@ -82,11 +119,10 @@ function scoreTracker(){
 
 //this function fills in the 2d array at the correct indices and also checks
 //the corresponding indices in order to see if a square is supposed to be filled or not
-function squareChecker(element){
-  let id = element.target.id;
+function squareChecker(id){
+  foundSquare = false
   if(id[3] != null){
     row = id[1]+id[2]
-    console.log(row)
     col = id[3]
   }else{
     row = id[1]
@@ -96,9 +132,9 @@ function squareChecker(element){
    if(id[0]=='h'){
       if(h[parseInt(row)][parseInt(col)] == 0){
          h[parseInt(row)][parseInt(col)] = 1
-         turnTracker()
-         socket.emit('moveMade', turn, h, v)
-         //this if and try block make sure to also change a 0 to a 1 in the index that
+        //  turnTracker()
+
+         //this if and try block make sure to also chang    e a 0 to a 1 in the index that
          //corresponds to the adjacent square since some lines can complete more than 1 square!
          //the if is to check if it is an edge line, thus can only create 1 sqaure at most
           if(id != "h10" && id != "h00" && id != "h20" && id != "h30")
@@ -108,29 +144,25 @@ function squareChecker(element){
           catch{
 
           }
-
-          colorChange(element)
+          colorChange(id)
           square = document.getElementById(isSquare(id))
           if (square != null) {
             square.style.background = getColor()
             scoreTracker()
-            socket.emit('score', p1, p2, p3)
             square = document.getElementById(isSquare(id))
             if (square != null) {
               scoreTracker()
-              socket.emit('score', p1, p2, p3)
               square.style.background = getColor()
             }
-            turn -=1
+            foundSquare = true
           }
-          
+          turnTracker(foundSquare)
         }
       }
       else{
         if(v[parseInt(row)][parseInt(col)] == 0){
             v[parseInt(row)][parseInt(col)] = 1
-            turnTracker()
-            socket.emit('moveMade', turn, h, v)
+            // turnTracker()
             if(id != "v00" && id != "v40" &&id != "v80" &&id != "v71"  &&id != "v111" &&id != "v31" &&id != "v151"&&id != "v120"){
               try{
                 v[parseInt(row)+1][0] = 1
@@ -140,20 +172,19 @@ function squareChecker(element){
 
               }
             }
-            colorChange(element)
+            colorChange(id)
             square = document.getElementById(isSquare(id))
             if (square != null) {
               square.style.background = getColor()
               scoreTracker()
-              socket.emit('score', p1, p2, p3)
               square = document.getElementById(isSquare(id))
               if (square != null) {
                 scoreTracker()
-                socket.emit('score', p1, p2, p3)
                 square.style.background = getColor()
               }
-              turn -=1
+              foundSquare = true
             }
+            turnTracker(foundSquare)
           }
   }
     gameEnd()
