@@ -13,6 +13,14 @@
 <body>
     <div id="passContainer" class="display-5 text-center">
     </div>
+    <div class="joinPopUp" id="joinPop">
+        <br>
+        <br>
+        <input type="roomCode" class="form-control" placeholder="Enter Code" id = "code">
+        <br>
+        <button class="btn btn-success px-5" onclick="closeJoinPop()">Join</button>
+    </div>
+
     <div class="popup" id="popup">
         <br>
         <br>
@@ -23,6 +31,7 @@
         <br>
         <button onclick="closePopup()">Close</button>
     </div>
+
     <div class = "m-5 text-center">
         <h1 class="display-5" id="turnDisplay">Player 1's turn</h1>
         <div class = "scores">

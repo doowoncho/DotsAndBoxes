@@ -18,9 +18,9 @@ socket.on('connect', () =>{
             player = 0
           }
           else{
-            code = prompt("Type in your friend's room code");
+            openJoinPop()
             player = 1
-            socket.emit("join-room", code)
+
           }
 })
         
@@ -283,4 +283,17 @@ function openPopup(){
 
 function closePopup(){
     popup.classList.remove("open-popup");
+}
+
+
+let join = document.getElementById("joinPop");
+function openJoinPop(){
+  join.classList.add("open-popup");
+}
+
+function closeJoinPop(){
+  let input = document.getElementById("code");
+  code = input.value
+  socket.emit("join-room", code)
+  join.classList.remove("open-popup");
 }
