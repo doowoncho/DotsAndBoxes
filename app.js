@@ -48,7 +48,6 @@ function gameInit(){
   turnDisplayer()
   scoreDisplayer()
   start = true
-  console.log(player)
 }
 
 //keeps track of the turns by increasing turn by 1 everytime a move is made

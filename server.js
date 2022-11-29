@@ -19,16 +19,13 @@ io.on('connect', socket =>{
   })
 
   socket.on('join-room', (code, name, playerList, cb) =>{    
-    console.log(`${name} joined room ${code}`)
+
     socket.join(code)
-    socket.to(code).emit('addPlayer', name)
-    if((io.sockets.adapter.rooms.get(code).size) == 3) {
-      io.in(code).emit('roomFull')
-    }
     if((io.sockets.adapter.rooms.get(code).size) > 3) {
       socket.leave(code)
     }
     else{
+      socket.to(code).emit('addPlayer', name)
       cb(io.sockets.adapter.rooms.get(code).size)
     }
   })
