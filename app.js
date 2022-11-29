@@ -17,10 +17,8 @@ socket.on('connect', () =>{
         div.textContent = "Room Code: " +"test"+socket.id
         document.getElementById('passContainer').append(div)
         code = "test"+socket.id
-        player = 0
       }
       else{
-        player = 1
       }
       openJoinPop()
     })
@@ -31,10 +29,6 @@ socket.on('changeTurn', (id) => {
 
 socket.on('changeScore', () =>{
   scoreTracker()
-})
-
-socket.on('roomFull', () => {
-  player = 2
 })
 
 socket.on('addPlayer', (name) => {
@@ -54,6 +48,7 @@ function gameInit(){
   turnDisplayer()
   scoreDisplayer()
   start = true
+  console.log(player)
 }
 
 //keeps track of the turns by increasing turn by 1 everytime a move is made
@@ -295,10 +290,10 @@ function gameEnd(){
 function checkWinner(){
   winner = Math.max(p1,p2,p3)
   console.log(winner)
-  if(winner == p1) return 'Player 1'
-  else if(winner == p2) return'Player 2'
+  if(winner == p1) return players[0]
+  else if(winner == p2) return players[1]
   else if(winner == p3) {
-    return 'Player 3'
+    return players[2]
   }
 }
 
@@ -332,6 +327,8 @@ function closeJoinPop(){
     displayName = document.getElementById("name").value
     code = document.getElementById("code").value
   }
-  socket.emit("join-room", code, displayName)
+  socket.emit("join-room", code, displayName, players, callBack =>{
+    player = callBack-1
+  })
   join.classList.remove("open-popup");
 }
