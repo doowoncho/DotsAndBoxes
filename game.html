@@ -11,10 +11,24 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 <body>
+    <br>
     <div id="passContainer" class="display-5 text-center">
     </div>
+
+    <div class="joinPopUp" id="createPop">
+        <br>
+        <h1>Join Room</h1>
+        <br>
+        <input type="name" class="form-control" placeholder="Display Name" id = "hostName">
+        <br>
+        <button class="btn btn-success px-5" onclick="closeJoinPop()">Join</button>
+    </div>
+
     <div class="joinPopUp" id="joinPop">
         <br>
+        <h1>Join Room</h1>
+        <br>
+        <input type="name" class="form-control" placeholder="Display Name" id = "name">
         <br>
         <input type="roomCode" class="form-control" placeholder="Enter Code" id = "code">
         <br>
@@ -33,7 +47,7 @@
     </div>
 
     <div class = "m-5 text-center">
-        <h1 class="display-5" id="turnDisplay">Player 1's turn</h1>
+        <h1 class="display-5" id="turnDisplay">Waiting for players to join...</h1>
         <div class = "scores">
             <h1 class="display-5 text-primary" id="p1Display">P1: 0</h1>
             <h1 class="display-5 text-danger" id="p2Display">P2: 0</h1>

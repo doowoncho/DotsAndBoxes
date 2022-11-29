@@ -5,25 +5,26 @@ const host = urlParams.get('playerType') == "host";
 
 code = null
 player = null
+displayName = "Doowon"
+start = false
+
+players = []
 
 //logic seems to be off by a bit when someone gets a square
-
 socket.on('connect', () =>{
-        if(host == true){
-            const div = document.createElement("div")
-            div.textContent = "Room Code: " +"test"+socket.id
-            document.getElementById('passContainer').append(div)
-            code = "test"+socket.id
-            socket.emit("join-room", code)     
-            player = 0
-          }
-          else{
-            openJoinPop()
-            player = 1
-
-          }
-})
-        
+    if(host == true){
+        const div = document.createElement("div")
+        div.textContent = "Room Code: " +"test"+socket.id
+        document.getElementById('passContainer').append(div)
+        code = "test"+socket.id
+        player = 0
+      }
+      else{
+        player = 1
+      }
+      openJoinPop()
+    })
+    
 socket.on('changeTurn', (id) => {
   squareChecker(id)
 })
@@ -34,8 +35,27 @@ socket.on('changeScore', () =>{
 
 socket.on('roomFull', () => {
   player = 2
+})
+
+socket.on('addPlayer', (name) => {
+  players.push(name)
+  if(players.length == 3){
+    socket.emit('nameList', players, code)
+  }
+})
+
+socket.on('setPlayers', playerList =>{
+  players = playerList
+  gameInit()
 
 })
+
+function gameInit(){
+  turnDisplayer()
+  scoreDisplayer()
+  start = true
+}
+
 //keeps track of the turns by increasing turn by 1 everytime a move is made
 turn = 0
 //the different actual displays that show scores as well ahs whos turn it is
@@ -57,7 +77,7 @@ h = [[0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], [0,0],[0,0],[0,0],[0,0], 
 //checks the id of the element that is clicked!
 document.addEventListener('click', (element) =>
   {
-    if(turn == player){
+    if(turn == player && start == true){
         if (element.target.id[0] == 'h' || element.target.id[0] == 'v') {
             squareChecker(element.target.id)  
             socket.emit('moveMade', element.target.id, code)
@@ -94,27 +114,36 @@ function turnTracker(foundSquare){
 }
 
 function turnDisplayer(){
-    if(turn == 0)turnDisplay.innerHTML ="Player 1's turn"
-    if(turn == 1)turnDisplay.innerHTML ="Player 2's turn"
-    if(turn == 2)turnDisplay.innerHTML ="Player 3's turn"
+  if(turn == player){
+    turnDisplay.innerHTML =`Your turn`
+  }
+  else{
+    if(turn == 0)turnDisplay.innerHTML =`${players[0]}'s turn`
+    if(turn == 1)turnDisplay.innerHTML =`${players[1]}'s turn`
+    if(turn == 2)turnDisplay.innerHTML =`${players[2]}'s turn`
+  }
 }
 
 //This changes the display as well as the score to keep track
 //of the scores
 function scoreTracker(){
   if(turn == 0){
-    p1+=1
-    p1Display.innerHTML =`P1: ${p1}`
-
+    p1+=1 
   }
   if(turn == 1){
     p2+=1
-    p2Display.innerHTML =`P2: ${p2}`
   }
   if(turn == 2){
     p3+=1
-    p3Display.innerHTML =`P3: ${p3}`
   }
+  scoreDisplayer()
+
+}
+
+function scoreDisplayer(){
+  p1Display.innerHTML =`${players[0]}: ${p1}`
+  p2Display.innerHTML =`${players[1]}: ${p2}`
+  p3Display.innerHTML =`${players[2]}: ${p3}`
 }
 
 //this function fills in the 2d array at the correct indices and also checks
@@ -134,7 +163,7 @@ function squareChecker(id){
          h[parseInt(row)][parseInt(col)] = 1
         //  turnTracker()
 
-         //this if and try block make sure to also chang    e a 0 to a 1 in the index that
+         //this if and try block make sure to also change a 0 to a 1 in the index that
          //corresponds to the adjacent square since some lines can complete more than 1 square!
          //the if is to check if it is an edge line, thus can only create 1 sqaure at most
           if(id != "h10" && id != "h00" && id != "h20" && id != "h30")
@@ -288,12 +317,21 @@ function closePopup(){
 
 let join = document.getElementById("joinPop");
 function openJoinPop(){
+  if(host == true){
+    join = document.getElementById("createPop")
+  }
   join.classList.add("open-popup");
 }
 
 function closeJoinPop(){
-  let input = document.getElementById("code");
-  code = input.value
-  socket.emit("join-room", code)
+  if(host == true){
+    displayName = document.getElementById("hostName").value
+    players.push(displayName)
+  }
+  else{
+    displayName = document.getElementById("name").value
+    code = document.getElementById("code").value
+  }
+  socket.emit("join-room", code, displayName)
   join.classList.remove("open-popup");
 }
