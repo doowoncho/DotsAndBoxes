@@ -1,6 +1,7 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const cookieParser = require('cookie-parser')
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {

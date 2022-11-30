@@ -5,13 +5,14 @@ const host = urlParams.get('playerType') == "host";
 
 code = null
 player = null
-displayName = "Doowon"
+displayName= null
 start = false
 
 players = []
 
 //logic seems to be off by a bit when someone gets a square
 socket.on('connect', () =>{
+    
     if(host == true){
         const div = document.createElement("div")
         div.textContent = "Room Code: " +"test"+socket.id
@@ -45,6 +46,9 @@ socket.on('setPlayers', playerList =>{
 })
 
 function gameInit(){
+  setCookie(`player = ${player}`)
+  setCookie(`displayName = ${displayName}`)
+  setCookie(`players = ${players}`)
   turnDisplayer()
   scoreDisplayer()
   start = true
@@ -330,4 +334,23 @@ function closeJoinPop(){
     player = callBack-1
   })
   join.classList.remove("open-popup");
+}
+
+function setCookie(val){
+  document.cookie = val
+}
+
+function getCookie(cname) {
+  let cookie = cname + "=";
+  let arr = document.cookie.split(';');
+  for(let i = 0; i < arr.length; i++) {
+    let c = arr[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(cookie) == 0) {
+      return c.substring(cookie.length, c.length);
+    }
+  }
+  return""
 }
