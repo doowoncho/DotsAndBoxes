@@ -19,6 +19,7 @@ io.on('connect', socket =>{
       socket.to(code).emit('changeTurn', id)
   })
 
+
   socket.on('join-room', (code, name, playerList, cb) =>{    
 
     socket.join(code)

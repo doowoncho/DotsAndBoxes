@@ -7,22 +7,17 @@ code = null
 player = null
 displayName= null
 start = false
-
 players = []
+moveList = []
 
-//logic seems to be off by a bit when someone gets a square
 socket.on('connect', () =>{
-    
-    if(host == true){
-        const div = document.createElement("div")
-        div.textContent = "Room Code: " +"test"+socket.id
-        document.getElementById('passContainer').append(div)
-        code = "test"+socket.id
-      }
-      else{
-      }
+    if(getCookie("code") != null){
+      reconnect() 
+    }  
+    else{
       openJoinPop()
-    })
+    }
+})
     
 socket.on('changeTurn', (id) => {
   squareChecker(id)
@@ -42,14 +37,15 @@ socket.on('addPlayer', (name) => {
 socket.on('setPlayers', playerList =>{
   players = playerList
   gameInit()
-
 })
 
 function gameInit(){
-  setCookie(`player = ${player}`)
+  document.getElementById('passContainer').remove()
   setCookie(`displayName = ${displayName}`)
+  setCookie(`code = ${code}`)
   setCookie(`players = ${players}`)
-  turnDisplayer()
+  setCookie(`player = ${player}`)
+  turnDisplayer() 
   scoreDisplayer()
   start = true
 }
@@ -108,6 +104,7 @@ function turnTracker(foundSquare){
   if(turn >2){
     turn = 0
   }
+  setCookie(`turn = ${turn}`)
   turnDisplayer()
 }
 
@@ -135,7 +132,9 @@ function scoreTracker(){
     p3+=1
   }
   scoreDisplayer()
-
+  setCookie(`p1 = ${p1}`)
+  setCookie(`p2 = ${p2}`)
+  setCookie(`p3 = ${p3}`)
 }
 
 function scoreDisplayer(){
@@ -159,7 +158,7 @@ function squareChecker(id){
    if(id[0]=='h'){
       if(h[parseInt(row)][parseInt(col)] == 0){
          h[parseInt(row)][parseInt(col)] = 1
-        //  turnTracker()
+         moveList.push(id)
 
          //this if and try block make sure to also change a 0 to a 1 in the index that
          //corresponds to the adjacent square since some lines can complete more than 1 square!
@@ -189,7 +188,7 @@ function squareChecker(id){
       else{
         if(v[parseInt(row)][parseInt(col)] == 0){
             v[parseInt(row)][parseInt(col)] = 1
-            // turnTracker()
+            moveList.push(id)
             if(id != "v00" && id != "v40" &&id != "v80" &&id != "v71"  &&id != "v111" &&id != "v31" &&id != "v151"&&id != "v120"){
               try{
                 v[parseInt(row)+1][0] = 1
@@ -214,6 +213,7 @@ function squareChecker(id){
             turnTracker(foundSquare)
           }
   }
+    setCookie(`moves = ${moveList}`)
     gameEnd()
 }
 
@@ -285,6 +285,7 @@ function gameEnd(){
 
   if(end == true){
     openPopup()
+    clearC()
   }
 
 }
@@ -312,7 +313,6 @@ function closePopup(){
     popup.classList.remove("open-popup");
 }
 
-
 let join = document.getElementById("joinPop");
 function openJoinPop(){
   if(host == true){
@@ -325,6 +325,10 @@ function closeJoinPop(){
   if(host == true){
     displayName = document.getElementById("hostName").value
     players.push(displayName)
+    const div = document.createElement("div")
+    div.textContent = "Room Code: " +"test"+socket.id
+    document.getElementById('passContainer').append(div)
+    code = "test"+socket.id
   }
   else{
     displayName = document.getElementById("name").value
@@ -340,6 +344,7 @@ function setCookie(val){
   document.cookie = val
 }
 
+//re write this code please
 function getCookie(cname) {
   let cookie = cname + "=";
   let arr = document.cookie.split(';');
@@ -352,5 +357,35 @@ function getCookie(cname) {
       return c.substring(cookie.length, c.length);
     }
   }
-  return""
+  return null
+}
+
+function reconnect(){
+  start = true
+  code = getCookie('code')
+  displayName = getCookie('displayName')
+  players = getCookie('players').split(',')
+
+  player = getCookie('player')
+  moveList = getCookie('moves').split(',')
+  for(let i = 0; i<moveList.length; i++){
+    squareChecker(moveList[i])
+  }
+
+  socket.emit("join-room", code, displayName, players, callBack=>{
+     console.log(callBack)
+   })
+
+  scoreDisplayer()
+  turnDisplayer()
+}
+
+function clearC(){
+  document.cookie = "code= ; expires = Thu, 01 Jan 2020 00:00:00 MT"
+  setCookie(`displayName = ${null}`)
+  setCookie(`players = ${null}`)
+  setCookie(`player = ${null}`)
+  setCookie(`turn = 0`)
+
+  console.log(getCookie(code))
 }
