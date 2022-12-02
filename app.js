@@ -349,12 +349,11 @@ function getCookie(cname) {
   let cookie = cname + "=";
   let arr = document.cookie.split(';');
   for(let i = 0; i < arr.length; i++) {
-    let c = arr[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
+    while (arr[i].charAt(0) == ' ') {
+      arr[i] = arr[i].substring(1);
     }
-    if (c.indexOf(cookie) == 0) {
-      return c.substring(cookie.length, c.length);
+    if (arr[i].indexOf(cookie) == 0) {
+      return arr[i].substring(cookie.length, arr[i].length);
     }
   }
   return null
